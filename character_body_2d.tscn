@@ -1,7 +1,8 @@
-[gd_scene load_steps=79 format=3 uid="uid://48uyc3st0y6q"]
+[gd_scene load_steps=86 format=3 uid="uid://48uyc3st0y6q"]
 
 [ext_resource type="Script" uid="uid://34o5ifh3qdjy" path="res://player_script.gd" id="1_ghijl"]
 [ext_resource type="Texture2D" uid="uid://m5mke8e2rbrl" path="res://assets/Player/idl.png" id="2_44cfe"]
+[ext_resource type="Shader" uid="uid://bc8v5pkeyg3ld" path="res://character_body_2d.gdshader" id="2_lhvu3"]
 [ext_resource type="Texture2D" uid="uid://brjx060fa4xid" path="res://assets/Player/running.png" id="3_dd465"]
 [ext_resource type="AnimationNodeBlendSpace2D" uid="uid://dvf05dawvl0ek" path="res://animation/player_walk.tres" id="4_44cfe"]
 [ext_resource type="Script" uid="uid://d0f4ua3tsbtef" path="res://player_animation.gd" id="5_dd465"]
@@ -9,6 +10,11 @@
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ghijl"]
 radius = 8.0
 height = 24.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4sjlk"]
+shader = ExtResource("2_lhvu3")
+shader_parameter/color = Color(0.18606573, 0.80418736, 0.90189636, 1)
+shader_parameter/flashState = 0.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4sjlk"]
 atlas = ExtResource("2_44cfe")
@@ -343,6 +349,9 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_wyqjk"]
+animation = &"dodge"
+
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_44cfe"]
 animation = &"idle_up"
 
@@ -397,14 +406,24 @@ advance_expression = "!direction"
 advance_mode = 2
 advance_expression = "direction"
 
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_k85er"]
+advance_mode = 2
+advance_expression = "is_dodging"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_ebjds"]
+advance_mode = 2
+advance_expression = "!is_dodging"
+
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_4sjlk"]
 states/Start/position = Vector2(114, 88)
+states/dodge/node = SubResource("AnimationNodeAnimation_wyqjk")
+states/dodge/position = Vector2(607, 52)
 states/idle/node = SubResource("AnimationNodeBlendSpace2D_dd465")
 states/idle/position = Vector2(383, 169)
 states/walk/node = ExtResource("4_44cfe")
 states/walk/position = Vector2(383, 52)
-transitions = ["Start", "walk", SubResource("AnimationNodeStateMachineTransition_lhvu3"), "walk", "idle", SubResource("AnimationNodeStateMachineTransition_44cfe"), "idle", "walk", SubResource("AnimationNodeStateMachineTransition_dd465")]
-graph_offset = Vector2(-447, -35)
+transitions = ["Start", "walk", SubResource("AnimationNodeStateMachineTransition_lhvu3"), "walk", "idle", SubResource("AnimationNodeStateMachineTransition_44cfe"), "idle", "walk", SubResource("AnimationNodeStateMachineTransition_dd465"), "walk", "dodge", SubResource("AnimationNodeStateMachineTransition_k85er"), "dodge", "walk", SubResource("AnimationNodeStateMachineTransition_ebjds")]
+graph_offset = Vector2(-256, -30)
 
 [sub_resource type="Animation" id="Animation_ghijl"]
 length = 0.001
@@ -443,6 +462,154 @@ tracks/2/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("AnimatedSprite2D:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("AnimatedSprite2D:rotation")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath(".:SPEED")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [80.0]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath(".:is_dodging")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("CPUParticles2D:emitting")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("AnimatedSprite2D:material:shader_parameter/flashState")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+
+[sub_resource type="Animation" id="Animation_2dyae"]
+resource_name = "dodge"
+length = 5.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(0.815, 0.815), Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AnimatedSprite2D:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.03333333, 0.23333333),
+"transitions": PackedFloat32Array(0.7071065, 1.0352646, 1),
+"update": 0,
+"values": [0.0, 3.141592653589793, 6.283185307179586]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:SPEED")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [300.0]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".:is_dodging")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 1.8666666),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [true, false]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("CPUParticles2D:emitting")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("AnimatedSprite2D:material:shader_parameter/flashState")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.13333334, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.0, 1.0, 0.0]
 }
 
 [sub_resource type="Animation" id="Animation_wyqjk"]
@@ -1040,6 +1207,7 @@ tracks/2/keys = {
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_dd465"]
 _data = {
 &"RESET": SubResource("Animation_ghijl"),
+&"dodge": SubResource("Animation_2dyae"),
 &"idle_down": SubResource("Animation_wyqjk"),
 &"idle_lower_left": SubResource("Animation_au0nh"),
 &"idle_lower_right": SubResource("Animation_sxias"),
@@ -1058,6 +1226,9 @@ _data = {
 &"walk_upper_right": SubResource("Animation_qp52p")
 }
 
+[sub_resource type="Gradient" id="Gradient_dd465"]
+colors = PackedColorArray(0.9858449, 0.58173573, 0.80562806, 1, 0.6410356, 0.9530397, 0.9999998, 1)
+
 [node name="CharacterBody2D" type="CharacterBody2D"]
 motion_mode = 1
 script = ExtResource("1_ghijl")
@@ -1068,6 +1239,7 @@ shape = SubResource("CapsuleShape2D_ghijl")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
+material = SubResource("ShaderMaterial_4sjlk")
 sprite_frames = SubResource("SpriteFrames_wd4sy")
 animation = &"idle_back"
 frame = 1
@@ -1088,3 +1260,28 @@ libraries = {
 [node name="PlayerAnimation" type="Node2D" parent="." node_paths=PackedStringArray("animation_tree")]
 script = ExtResource("5_dd465")
 animation_tree = NodePath("../AnimationTree")
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
+emitting = false
+amount = 30
+one_shot = true
+explosiveness = 0.42
+randomness = 0.3
+emission_shape = 1
+emission_sphere_radius = 15.84
+gravity = Vector2(0, 0)
+initial_velocity_min = 4.5
+initial_velocity_max = 4.5
+angular_velocity_min = 83.48
+angular_velocity_max = 83.48
+linear_accel_min = 17.39
+linear_accel_max = 17.39
+radial_accel_min = 25.29
+radial_accel_max = 77.46
+angle_min = -313.0
+angle_max = 417.4
+color_ramp = SubResource("Gradient_dd465")
+hue_variation_min = 0.67
+hue_variation_max = 0.67
+
+[connection signal="input_event" from="." to="." method="_on_input_event"]

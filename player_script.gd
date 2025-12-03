@@ -5,12 +5,26 @@ extends CharacterBody2D
 @export var ACCEL = 10.0
 @export var FRICTION = 15.0
 @export var direction = Vector2.ZERO
+@export var is_dodging = false;
+@export var can_dodge = true;
+
+var last_direction = Vector2.ZERO
 
 func _physics_process(delta: float) -> void:
 	direction = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	
-	if direction != Vector2.ZERO:
-		velocity = lerp(velocity, direction * SPEED, ACCEL * delta)
+	if is_dodging:
+		velocity = lerp(velocity, last_direction * SPEED, ACCEL * delta)
 	else:
-		velocity = lerp(velocity, Vector2.ZERO, FRICTION * delta)
+		if direction != Vector2.ZERO:
+			velocity = lerp(velocity, direction * SPEED, ACCEL * delta)
+			last_direction = direction
+		else:
+			velocity = lerp(velocity, Vector2.ZERO, FRICTION * delta)
+			
+		if Input.is_action_just_pressed("dodge") and !is_dodging:
+			print_debug("starting dodging")
+			is_dodging = true
+		
 	move_and_slide()
+		
